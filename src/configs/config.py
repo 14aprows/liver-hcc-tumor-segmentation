@@ -4,6 +4,16 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DATASET_DIR = PROJECT_ROOT / "dataset"
 RAW_DATA_DIR = DATASET_DIR / "nifti_and_segms"
 
+OUTPUTS_DIR = PROJECT_ROOT / "outputs"
+CHECKPOINTS_DIR = OUTPUTS_DIR / "checkpoints"
+PREDICTIONS_DIR = OUTPUTS_DIR / "predictions"
+FIGURES_DIR = OUTPUTS_DIR / "figures"
+
+LOGS_DIR = PROJECT_ROOT / "logs"
+DATASET_CHECK_LOGS_DIR = LOGS_DIR / "dataset_checks"
+TRAINING_LOGS_DIR = LOGS_DIR / "training"
+EVALUATION_LOGS_DIR = LOGS_DIR / "evaluation"
+
 BASELINE_IMAGE_FILE = "art.nii.gz"
 BASELINE_MASK_FILE = "rater1_liver.nii.gz"
 
