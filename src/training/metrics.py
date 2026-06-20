@@ -2,8 +2,8 @@ import torch
 def dice_score(
     logits,
     targets,
-    threshold,
-    smooth
+    threshold=0.5,
+    smooth=1e-6,
 ):
     probs = torch.sigmoid(logits)
     preds = (probs > threshold).float()
@@ -18,8 +18,8 @@ def dice_score(
 def iou_score(
     logits,
     targets,
-    threshold,
-    smooth
+    threshold=0.5,
+    smooth=1e-6,
 ):
     probs = torch.sigmoid(logits)
     preds = (probs > threshold).float()
