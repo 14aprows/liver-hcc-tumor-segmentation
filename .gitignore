@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+.Python
+.python-version
+
+.ipynb_checkpoints/
+
+dataset/
+
+*.pt
+*.pth
