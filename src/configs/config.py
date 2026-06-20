@@ -4,6 +4,8 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DATASET_DIR = PROJECT_ROOT / "dataset"
 RAW_DATA_DIR = DATASET_DIR / "nifti_and_segms"
 
+PROCESSED_DIR = PROJECT_ROOT / "processed"
+
 OUTPUTS_DIR = PROJECT_ROOT / "outputs"
 CHECKPOINTS_DIR = OUTPUTS_DIR / "checkpoints"
 PREDICTIONS_DIR = OUTPUTS_DIR / "predictions"
@@ -36,3 +38,14 @@ TUMOR_MASK_PATTERNS = [
     "rater1_tumor*.nii.gz",
     "rater2_tumor*.nii.gz",
 ]
+
+IMAGE_SIZE = (256, 256)
+HU_MIN = -100
+HU_MAX = 400
+SKIP_EMPTY_MASK = True
+RESET_PROCESSED_DIR = True
+
+RANDOM_SEED = 42
+TRAIN_RATIO = 0.7
+VAL_RATIO = 0.15
+TEST_RATIO = 0.15
