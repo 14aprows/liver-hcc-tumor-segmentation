@@ -9,7 +9,7 @@ from src.utils.nifti_utils import load_nifti_shape, read_mask_info
 from src.utils.file_utils import (
     build_timestamped_path,
     write_rows_to_csv,
-    write_lines_to_file,
+    # write_lines_to_file,
 )
 
 def check_dataset():
@@ -21,7 +21,7 @@ def check_dataset():
     shape_errors = []
 
     rows = []
-    log_lines = []
+    # log_lines = []
 
     csv_path = build_timestamped_path(
         DATASET_CHECK_LOGS_DIR,
@@ -96,12 +96,12 @@ def check_dataset():
                     "study_dir": str(study_dir),
                 })
 
-            log_lines.append(
-                f"{case_dir.name}/{study_dir.name} | "
-                f"missing={len(study_missing_files)} | "
-                f"shape_mismatch={has_shape_mismatch} | "
-                f"rater1_tumor_masks={len(tumor_masks)}"
-            )
+            # log_lines.append(
+            #     f"{case_dir.name}/{study_dir.name} | "
+            #     f"missing={len(study_missing_files)} | "
+            #     f"shape_mismatch={has_shape_mismatch} | "
+            #     f"rater1_tumor_masks={len(tumor_masks)}"
+            # )
 
             print(f"rater1 tumor masks: {len(tumor_masks)}")
             print()
@@ -121,7 +121,7 @@ def check_dataset():
     ]
 
     write_rows_to_csv(csv_path, rows, fieldnames)
-    write_lines_to_file(log_path, log_lines)
+    # write_lines_to_file(log_path, log_lines)
 
     print("Summary")
     print(f"Total cases: {total_cases}")
@@ -129,7 +129,7 @@ def check_dataset():
     print(f"Missing files: {len(missing_files)}")
     print(f"Shape errors: {len(shape_errors)}")
     print(f"CSV saved to: {csv_path}")
-    print(f"Log saved to: {log_path}")
+    # print(f"Log saved to: {log_path}")
 
 if __name__ == "__main__":
     check_dataset()
