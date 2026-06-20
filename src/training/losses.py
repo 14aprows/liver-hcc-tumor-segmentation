@@ -22,6 +22,7 @@ class BCEDiceLoss(nn.Module):
         self.dice = DiceLoss(smooth=smooth)
         self.bce_weight = bce_weight
         self.dice_weight = dice_weight
+        self.smooth = smooth
         
     def forward(self, logits, targets):
         bce_loss = self.bce(logits, targets)
