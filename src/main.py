@@ -9,12 +9,15 @@ from src.configs.config import (
     EPOCHS,
     LEARNING_RATE,
     NUM_WORKERS,
+    FIGURES_DIR
 )
 from src.data.liver_dataloaders import create_train_val_test_loaders
 from src.models.unet import UNet
+from src.models.resunet import ResUNet
 from src.training.losses import BCEDiceLoss
 from src.training.trainer import train_one_epoch, evaluate
 from src.utils.file_utils import ensure_dir, build_timestamped_path, write_rows_to_csv
+from src.utils.plot_utils import plot_training_history
 
 def resolve_device():
     if DEVICE == "cuda" and not torch.cuda.is_available():
@@ -35,15 +38,17 @@ def main():
         num_workers=NUM_WORKERS,
     )
 
-    model = UNet(in_channels=1, out_channels=1).to(device)
+    model = ResUNet(in_channels=1, out_channels=1).to(device)
+    model_name = model.__class__.__name__.lower()
+    print(f"Model: {model_name}")
     criterion = BCEDiceLoss(bce_weight=0.5, dice_weight=0.5)
     optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
 
     best_val_dice = 0.0
     history = []
 
-    best_checkpoint_path = CHECKPOINTS_DIR / "best_unet.pth"
-    last_checkpoint_path = CHECKPOINTS_DIR / "last_unet.pth"
+    best_checkpoint_path = CHECKPOINTS_DIR / f"best_{model_name}.pth"
+    last_checkpoint_path = CHECKPOINTS_DIR / f"last_{model_name}.pth"
 
     for epoch in range(1, EPOCHS + 1):
         train_metrics = train_one_epoch(
@@ -88,6 +93,7 @@ def main():
             torch.save(
                 {
                     "epoch": epoch,
+                    "model_name": model_name,
                     "model_state_dict": model.state_dict(),
                     "optimizer_state_dict": optimizer.state_dict(),
                     "best_val_dice": best_val_dice,
@@ -102,6 +108,7 @@ def main():
         torch.save(
             {
                 "epoch": epoch,
+                "model_name": model_name,
                 "model_state_dict": model.state_dict(),
                 "optimizer_state_dict": optimizer.state_dict(),
                 "best_val_dice": best_val_dice,
@@ -113,7 +120,7 @@ def main():
 
     history_path = build_timestamped_path(
         output_dir=TRAINING_LOGS_DIR,
-        prefix="train_history",
+        prefix=f"train_history_{model_name}",
         suffix=".csv",
     )
 
@@ -132,6 +139,14 @@ def main():
         rows=history,
         fieldnames=fieldnames,
     )
+
+    figure_path = plot_training_history(
+        history=history,
+        output_dir=FIGURES_DIR / "training",
+        prefix=f"train_history_{model_name}",
+    )
+    
+    print(f"Training plot : {figure_path}")
 
     print()
     print("Training finished.")
