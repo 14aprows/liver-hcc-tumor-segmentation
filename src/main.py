@@ -14,6 +14,7 @@ from src.configs.config import (
 from src.data.liver_dataloaders import create_train_val_test_loaders
 from src.models.unet import UNet
 from src.models.resunet import ResUNet
+from src.models.attention_unet import AttentionUNet
 from src.training.losses import BCEDiceLoss
 from src.training.trainer import train_one_epoch, evaluate
 from src.utils.file_utils import ensure_dir, build_timestamped_path, write_rows_to_csv
@@ -38,7 +39,7 @@ def main():
         num_workers=NUM_WORKERS,
     )
 
-    model = ResUNet(in_channels=1, out_channels=1).to(device)
+    model = UNet(in_channels=1, out_channels=1).to(device)
     model_name = model.__class__.__name__.lower()
     print(f"Model: {model_name}")
     criterion = BCEDiceLoss(bce_weight=0.5, dice_weight=0.5)
