@@ -5,7 +5,7 @@ from src.configs.config import (
     RAW_DATA_DIR,
     PROCESSED_DIR,
     BASELINE_IMAGE_FILE,
-    BASELINE_MASK_FILE,
+    TUMOR_MASK_PATTERN,
     IMAGE_SIZE,
     HU_MIN,
     HU_MAX,
@@ -31,14 +31,14 @@ def collect_valid_studies() -> list[dict]:
 
         for study_dir in study_dirs:
             image_path = study_dir / BASELINE_IMAGE_FILE
-            mask_path = study_dir / BASELINE_MASK_FILE
+            mask_paths = sorted(study_dir.glob(TUMOR_MASK_PATTERN))
 
-            if image_path.exists() and mask_path.exists():
+            if image_path.exists() and len(mask_paths) > 0:
                 valid_studies.append({
                     "case_id": case_dir.name,
                     "study_id": study_dir.name,
                     "image_path": image_path,
-                    "mask_path": mask_path,
+                    "mask_paths": mask_paths,
                 })
 
     return valid_studies
@@ -84,7 +84,7 @@ def main() -> None:
     print(f"Raw data dir     : {RAW_DATA_DIR}")
     print(f"Processed dir    : {PROCESSED_DIR}")
     print(f"Image file       : {BASELINE_IMAGE_FILE}")
-    print(f"Mask file        : {BASELINE_MASK_FILE}")
+    print(f"Mask pattern     : {TUMOR_MASK_PATTERN}")
     print(f"Image size       : {IMAGE_SIZE}")
     print(f"HU window        : [{HU_MIN}, {HU_MAX}]")
     print(f"Skip empty mask  : {SKIP_EMPTY_MASK}")
@@ -128,7 +128,7 @@ def main() -> None:
                     case_id=item["case_id"],
                     study_id=item["study_id"],
                     image_path=item["image_path"],
-                    mask_path=item["mask_path"],
+                    mask_paths=item["mask_paths"],
                     output_image_dir=output_image_dir,
                     output_mask_dir=output_mask_dir,
                     image_size=IMAGE_SIZE,
