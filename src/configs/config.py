@@ -1,10 +1,13 @@
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
+
+TARGET_MASK_TYPE = "tumor"
+
 DATASET_DIR = PROJECT_ROOT / "dataset"
 RAW_DATA_DIR = DATASET_DIR / "nifti_and_segms"
 
-PROCESSED_DIR = PROJECT_ROOT / "processed"
+PROCESSED_DIR = PROJECT_ROOT / "processed" / TARGET_MASK_TYPE
 
 OUTPUTS_DIR = PROJECT_ROOT / "outputs"
 CHECKPOINTS_DIR = OUTPUTS_DIR / "checkpoints"
@@ -17,7 +20,8 @@ TRAINING_LOGS_DIR = LOGS_DIR / "training"
 EVALUATION_LOGS_DIR = LOGS_DIR / "evaluation"
 
 BASELINE_IMAGE_FILE = "art.nii.gz"
-BASELINE_MASK_FILE = "rater1_liver.nii.gz"
+LIVER_MASK_FILE = "rater1_liver.nii.gz"
+TUMOR_MASK_PATTERN = "rater1_tumor*.nii.gz"
 
 IMAGE_FILES = [
     "pre.nii.gz",
@@ -50,7 +54,7 @@ TRAIN_RATIO = 0.7
 VAL_RATIO = 0.15
 TEST_RATIO = 0.15
 
-DEVICE = "cuda" 
+DEVICE = "cuda"
 BATCH_SIZE = 8
 NUM_WORKERS = 0
 EPOCHS = 100
