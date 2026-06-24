@@ -45,11 +45,26 @@ def resize_mask(
         interpolation=cv2.INTER_NEAREST,
     )
 
+def combine_mask_volumes(mask_paths, expected_shape, case_id, study_id):
+    mask_paths = list(mask_paths)
+    if len(mask_paths) == 0:
+        raise ValueError(f"No mask files found for {case_id}/{study_id}")
+    combined_mask = np.zeros(expected_shape, dtype=np.float32)
+    for mask_path in mask_paths:
+        mask_volume = load_nifti_array(mask_path)
+        if mask_volume.shape != expected_shape:
+            raise ValueError(
+                f"Shape mismatch for mask {mask_path}: "
+                f"expected={expected_shape}, got={mask_volume.shape}"
+            )
+        combined_mask = np.logical_or(combined_mask, mask_volume > 0)
+    return combined_mask.astype(np.float32)
+
 def preprocess_single_study(
     case_id,
     study_id,
     image_path: Path,
-    mask_path: Path,
+    mask_paths: list[Path],
     output_image_dir: Path,
     output_mask_dir: Path,
     image_size,
@@ -58,20 +73,19 @@ def preprocess_single_study(
     skip_empty_mask,
 ):
     image_volume = load_nifti_array(image_path)
-    mask_volume = load_nifti_array(mask_path)
-
-    if image_volume.shape != mask_volume.shape:
-        raise ValueError(
-            f"Shape mismatch for {case_id}/{study_id}: "
-            f"image={image_volume.shape}, mask={mask_volume.shape}"
-        )
-
     if image_volume.ndim != 3:
         raise ValueError(
             f"Expected 3D volume for {case_id}/{study_id}, "
             f"got shape={image_volume.shape}"
         )
 
+    mask_volume = combine_mask_volumes(
+        mask_paths=mask_paths,
+        expected_shape=image_volume.shape,
+        case_id=case_id,
+        study_id=study_id,
+    )
+    
     ensure_dir(output_image_dir)
     ensure_dir(output_mask_dir)
 
